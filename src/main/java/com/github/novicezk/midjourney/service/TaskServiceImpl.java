@@ -120,4 +120,11 @@ public class TaskServiceImpl implements TaskService {
 			return this.discordService.swapId(task.getPrompt(), finalFileName, task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE));
 		});
 	}
+
+	@Override
+	public SubmitResultVO submitDelId(Task task) {
+		return this.taskQueueHelper.submitTask(task, () ->
+				this.discordService.delId(task.getPrompt(), task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE))
+		);
+	}
 }

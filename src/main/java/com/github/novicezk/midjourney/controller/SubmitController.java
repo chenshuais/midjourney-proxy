@@ -95,6 +95,20 @@ public class SubmitController {
 		return this.taskService.submitSwapId(task, dataUrl);
 	}
 
+	@ApiOperation(value = "删除面部图片")
+	@PostMapping("/delete-avatar-id")
+	public SubmitResultVO deleteAvatarId(@RequestBody SubmitDeleteAvatarIdDTO avatarDTO) {
+		String avatarName = avatarDTO.getName();
+		if (CharSequenceUtil.isBlank(avatarName)) {
+			return SubmitResultVO.fail(ReturnCode.VALIDATION_ERROR, "name不能为空");
+		}
+		Task task = newTask(avatarDTO);
+		task.setAction(TaskAction.DELID);
+		task.setPrompt(avatarName);
+		task.setProperty(Constants.TASK_PROPERTY_FINAL_PROMPT, avatarName);
+		return this.taskService.submitDelId(task);
+	}
+
 	@ApiOperation(value = "提交Imagine任务")
 	@PostMapping("/imagine")
 	public SubmitResultVO imagine(@RequestBody SubmitImagineDTO imagineDTO) {

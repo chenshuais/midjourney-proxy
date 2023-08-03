@@ -24,4 +24,6 @@ public interface TaskService {
 	SubmitResultVO submitSaveId(Task task, DataUrl dataUrl);
 
 	SubmitResultVO submitSwapId(Task task, DataUrl dataUrl);
+
+	SubmitResultVO submitDelId(Task task);
 }

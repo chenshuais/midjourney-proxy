@@ -35,6 +35,11 @@ public enum TaskAction {
 	/**
 	 * 替换头部图片
 	 */
-	SWAPID
+	SWAPID,
+
+	/**
+	 * 删除头部图片
+	 */
+	DELID
 
 }

@@ -173,6 +173,15 @@ public class DiscordServiceImpl implements DiscordService {
 		return postJsonAndCheckStatus(params.toString());
 	}
 
+	@Override
+	public Message<Void> delId(String avatarId, String nonce) {
+		String paramsStr = replaceInteractionParams(this.swapIdParamsJson, nonce);
+		JSONObject params = new JSONObject(paramsStr);
+		params.getJSONObject("data").getJSONArray("options").getJSONObject(0)
+				.put("value", avatarId);
+		return postJsonAndCheckStatus(params.toString());
+	}
+
 	private String replaceInteractionParams(String paramsStr, String nonce) {
 		return paramsStr.replace("$guild_id", this.discordGuildId)
 				.replace("$channel_id", this.discordChannelId)

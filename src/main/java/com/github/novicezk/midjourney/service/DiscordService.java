@@ -25,6 +25,8 @@ public interface DiscordService {
 
 	Message<Void> swapId(String avatarId, String finalFileName, String nonce);
 
+	Message<Void> delId(String avatarId, String nonce);
+
 	Message<String> upload(String fileName, DataUrl dataUrl);
 
 	Message<String> sendImageMessage(String content, String finalFileName);
