@@ -25,6 +25,16 @@ public enum TaskAction {
 	/**
 	 * 多图混合.
 	 */
-	BLEND
+	BLEND,
+
+	/**
+	 * 保存头部图片
+	 */
+	SAVEID,
+
+	/**
+	 * 替换头部图片
+	 */
+	SWAPID
 
 }

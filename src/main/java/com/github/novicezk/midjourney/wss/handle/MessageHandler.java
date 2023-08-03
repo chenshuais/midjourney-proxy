@@ -42,6 +42,24 @@ public abstract class MessageHandler {
 		task.awake();
 	}
 
+	protected void findAndFinishFaceSwapTask(TaskCondition condition, String finalPrompt, DataObject message,
+											 boolean success, String reason) {
+		Task task = this.taskQueueHelper.findRunningTask(condition)
+				.max(Comparator.comparing(Task::getProgress))
+				.orElse(null);
+		if (task == null) {
+			return;
+		}
+		task.setImageUrl(getImageUrl(message));
+		task.setProperty(Constants.TASK_PROPERTY_FINAL_PROMPT, finalPrompt);
+		if (success) {
+			task.success();
+		} else {
+			task.fail(reason);
+		}
+		task.awake();
+	}
+
 	protected void finishTask(Task task, DataObject message) {
 		task.setProperty(Constants.TASK_PROPERTY_MESSAGE_ID, message.getString("id"));
 		task.setProperty(Constants.TASK_PROPERTY_MESSAGE_HASH, getMessageHash(task.getImageUrl()));

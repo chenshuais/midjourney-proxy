@@ -5,12 +5,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.github.novicezk.midjourney.Constants;
 import com.github.novicezk.midjourney.ProxyProperties;
 import com.github.novicezk.midjourney.ReturnCode;
-import com.github.novicezk.midjourney.dto.BaseSubmitDTO;
-import com.github.novicezk.midjourney.dto.SubmitBlendDTO;
-import com.github.novicezk.midjourney.dto.SubmitChangeDTO;
-import com.github.novicezk.midjourney.dto.SubmitDescribeDTO;
-import com.github.novicezk.midjourney.dto.SubmitImagineDTO;
-import com.github.novicezk.midjourney.dto.SubmitSimpleChangeDTO;
+import com.github.novicezk.midjourney.dto.*;
 import com.github.novicezk.midjourney.enums.TaskAction;
 import com.github.novicezk.midjourney.enums.TaskStatus;
 import com.github.novicezk.midjourney.exception.BannedPromptException;
@@ -51,6 +46,54 @@ public class SubmitController {
 	private final TaskStoreService taskStoreService;
 	private final ProxyProperties properties;
 	private final TaskService taskService;
+
+	@ApiOperation(value = "保存面部图片")
+	@PostMapping("/save-avatar-id")
+	public SubmitResultVO saveAvatarId(@RequestBody SubmitSaveAvatarIdDTO avatarDTO) {
+		String avatarName = avatarDTO.getName();
+		if (CharSequenceUtil.isBlank(avatarName)) {
+			return SubmitResultVO.fail(ReturnCode.VALIDATION_ERROR, "name不能为空");
+		}
+		if (CharSequenceUtil.isBlank(avatarDTO.getBase64())) {
+			return SubmitResultVO.fail(ReturnCode.VALIDATION_ERROR, "base64不能为空");
+		}
+		IDataUrlSerializer serializer = new DataUrlSerializer();
+		DataUrl dataUrl;
+		try {
+			dataUrl = serializer.unserialize(avatarDTO.getBase64());
+		} catch (MalformedURLException e) {
+			return SubmitResultVO.fail(ReturnCode.VALIDATION_ERROR, "base64格式错误");
+		}
+		Task task = newTask(avatarDTO);
+		task.setAction(TaskAction.SAVEID);
+		task.setPrompt(avatarName);
+		task.setProperty(Constants.TASK_PROPERTY_FINAL_PROMPT, avatarName);
+		return this.taskService.submitSaveId(task, dataUrl);
+	}
+
+	@ApiOperation(value = "替换面部图片")
+	@PostMapping("/swap-avatar")
+	public SubmitResultVO swapAvatar(@RequestBody SubmitSwapAvatarDTO avatarDTO) {
+		String avatarName = avatarDTO.getName();
+		if (CharSequenceUtil.isBlank(avatarName)) {
+			return SubmitResultVO.fail(ReturnCode.VALIDATION_ERROR, "name不能为空");
+		}
+		if (CharSequenceUtil.isBlank(avatarDTO.getBase64())) {
+			return SubmitResultVO.fail(ReturnCode.VALIDATION_ERROR, "base64不能为空");
+		}
+		IDataUrlSerializer serializer = new DataUrlSerializer();
+		DataUrl dataUrl;
+		try {
+			dataUrl = serializer.unserialize(avatarDTO.getBase64());
+		} catch (MalformedURLException e) {
+			return SubmitResultVO.fail(ReturnCode.VALIDATION_ERROR, "base64格式错误");
+		}
+		Task task = newTask(avatarDTO);
+		task.setAction(TaskAction.SWAPID);
+		task.setPrompt(avatarName);
+		task.setProperty(Constants.TASK_PROPERTY_FINAL_PROMPT, avatarName);
+		return this.taskService.submitSwapId(task, dataUrl);
+	}
 
 	@ApiOperation(value = "提交Imagine任务")
 	@PostMapping("/imagine")

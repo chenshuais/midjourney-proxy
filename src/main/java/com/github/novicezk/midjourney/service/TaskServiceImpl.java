@@ -95,4 +95,29 @@ public class TaskServiceImpl implements TaskService {
 		});
 	}
 
+	@Override
+	public SubmitResultVO submitSaveId(Task task, DataUrl dataUrl) {
+		return this.taskQueueHelper.submitTask(task, () -> {
+			String taskFileName = task.getId() + "." + MimeTypeUtils.guessFileSuffix(dataUrl.getMimeType());
+			Message<String> uploadResult = this.discordService.upload(taskFileName, dataUrl);
+			if (uploadResult.getCode() != ReturnCode.SUCCESS) {
+				return Message.of(uploadResult.getCode(), uploadResult.getDescription());
+			}
+			String finalFileName = uploadResult.getResult();
+			return this.discordService.saveId(task.getPrompt(), finalFileName, task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE));
+		});
+	}
+
+	@Override
+	public SubmitResultVO submitSwapId(Task task, DataUrl dataUrl) {
+		return this.taskQueueHelper.submitTask(task, () -> {
+			String taskFileName = task.getId() + "." + MimeTypeUtils.guessFileSuffix(dataUrl.getMimeType());
+			Message<String> uploadResult = this.discordService.upload(taskFileName, dataUrl);
+			if (uploadResult.getCode() != ReturnCode.SUCCESS) {
+				return Message.of(uploadResult.getCode(), uploadResult.getDescription());
+			}
+			String finalFileName = uploadResult.getResult();
+			return this.discordService.swapId(task.getPrompt(), finalFileName, task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE));
+		});
+	}
 }

@@ -20,4 +20,8 @@ public interface TaskService {
 	SubmitResultVO submitDescribe(Task task, DataUrl dataUrl);
 
 	SubmitResultVO submitBlend(Task task, List<DataUrl> dataUrls, BlendDimensions dimensions);
+
+	SubmitResultVO submitSaveId(Task task, DataUrl dataUrl);
+
+	SubmitResultVO submitSwapId(Task task, DataUrl dataUrl);
 }

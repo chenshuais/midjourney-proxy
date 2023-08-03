@@ -45,6 +45,8 @@ public class DiscordServiceImpl implements DiscordService {
 	private String describeParamsJson;
 	private String blendParamsJson;
 	private String messageParamsJson;
+	private String saveIdParamsJson;
+	private String swapIdParamsJson;
 
 	private String discordUserToken;
 	private String discordGuildId;
@@ -72,6 +74,8 @@ public class DiscordServiceImpl implements DiscordService {
 		this.describeParamsJson = ResourceUtil.readUtf8Str("api-params/describe.json");
 		this.blendParamsJson = ResourceUtil.readUtf8Str("api-params/blend.json");
 		this.messageParamsJson = ResourceUtil.readUtf8Str("api-params/message.json");
+		this.saveIdParamsJson = ResourceUtil.readUtf8Str("api-params/saveid.json");
+		this.swapIdParamsJson = ResourceUtil.readUtf8Str("api-params/swapid.json");
 	}
 
 	@Override
@@ -142,6 +146,30 @@ public class DiscordServiceImpl implements DiscordService {
 		options.put(new JSONObject().put("type", 3)
 				.put("name", "dimensions")
 				.put("value", "--ar " + dimensions.getValue()));
+		return postJsonAndCheckStatus(params.toString());
+	}
+
+	@Override
+	public Message<Void> saveId(String avatarId, String finalFileName, String nonce) {
+		String fileName = CharSequenceUtil.subAfter(finalFileName, "/", true);
+		String paramsStr = replaceInteractionParams(this.saveIdParamsJson, nonce)
+				.replace("$file_name", fileName)
+				.replace("$final_file_name", finalFileName);
+		JSONObject params = new JSONObject(paramsStr);
+		params.getJSONObject("data").getJSONArray("options").getJSONObject(0)
+				.put("value", avatarId);
+		return postJsonAndCheckStatus(params.toString());
+	}
+
+	@Override
+	public Message<Void> swapId(String avatarId, String finalFileName, String nonce) {
+		String fileName = CharSequenceUtil.subAfter(finalFileName, "/", true);
+		String paramsStr = replaceInteractionParams(this.swapIdParamsJson, nonce)
+				.replace("$file_name", fileName)
+				.replace("$final_file_name", finalFileName);
+		JSONObject params = new JSONObject(paramsStr);
+		params.getJSONObject("data").getJSONArray("options").getJSONObject(0)
+				.put("value", avatarId);
 		return postJsonAndCheckStatus(params.toString());
 	}
 

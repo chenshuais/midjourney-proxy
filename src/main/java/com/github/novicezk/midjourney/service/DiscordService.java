@@ -21,6 +21,10 @@ public interface DiscordService {
 
 	Message<Void> blend(List<String> finalFileNames, BlendDimensions dimensions, String nonce);
 
+	Message<Void> saveId(String avatarId, String finalFileName, String nonce);
+
+	Message<Void> swapId(String avatarId, String finalFileName, String nonce);
+
 	Message<String> upload(String fileName, DataUrl dataUrl);
 
 	Message<String> sendImageMessage(String content, String finalFileName);
