@@ -47,6 +47,7 @@ public class DiscordServiceImpl implements DiscordService {
 	private String messageParamsJson;
 	private String saveIdParamsJson;
 	private String swapIdParamsJson;
+	private String delIdParamsJson;
 
 	private String discordUserToken;
 	private String discordGuildId;
@@ -76,6 +77,7 @@ public class DiscordServiceImpl implements DiscordService {
 		this.messageParamsJson = ResourceUtil.readUtf8Str("api-params/message.json");
 		this.saveIdParamsJson = ResourceUtil.readUtf8Str("api-params/saveid.json");
 		this.swapIdParamsJson = ResourceUtil.readUtf8Str("api-params/swapid.json");
+		this.delIdParamsJson = ResourceUtil.readUtf8Str("api-params/delid.json");
 	}
 
 	@Override
@@ -175,7 +177,7 @@ public class DiscordServiceImpl implements DiscordService {
 
 	@Override
 	public Message<Void> delId(String avatarId, String nonce) {
-		String paramsStr = replaceInteractionParams(this.swapIdParamsJson, nonce);
+		String paramsStr = replaceInteractionParams(this.delIdParamsJson, nonce);
 		JSONObject params = new JSONObject(paramsStr);
 		params.getJSONObject("data").getJSONArray("options").getJSONObject(0)
 				.put("value", avatarId);
