@@ -52,7 +52,7 @@ public class SwapIdSuccessHandler extends MessageHandler {
 			return;
 		}
 		String taskId = taskIdMatcher.group(1);
-		Task task = this.taskQueueHelper.getRunningTask(taskId);
+		Task task = this.discordLoadBalancer.getRunningTask(taskId);
 		if (task == null) {
 			return;
 		}

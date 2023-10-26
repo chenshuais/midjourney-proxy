@@ -52,7 +52,7 @@ public abstract class MessageHandler {
 
 	protected void findAndFinishFaceSwapTask(TaskCondition condition, String finalPrompt, DataObject message,
 											 boolean success, String reason) {
-		Task task = this.taskQueueHelper.findRunningTask(condition)
+		Task task = this.discordLoadBalancer.findRunningTask(condition)
 				.max(Comparator.comparing(Task::getProgress))
 				.orElse(null);
 		if (task == null) {
