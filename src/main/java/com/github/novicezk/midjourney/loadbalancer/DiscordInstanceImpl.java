@@ -194,6 +194,21 @@ public class DiscordInstanceImpl implements DiscordInstance {
 	}
 
 	@Override
+	public Message<Void> saveId(String avatarId, String finalFileName, String nonce) {
+		return this.service.saveId(avatarId, finalFileName, nonce);
+	}
+
+	@Override
+	public Message<Void> swapId(String avatarId, String finalFileName, String nonce) {
+		return this.service.swapId(avatarId, finalFileName, nonce);
+	}
+
+	@Override
+	public Message<Void> delId(String avatarId, String nonce) {
+		return this.service.delId(avatarId, nonce);
+	}
+
+	@Override
 	public Message<String> upload(String fileName, DataUrl dataUrl) {
 		return this.service.upload(fileName, dataUrl);
 	}
