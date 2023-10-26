@@ -127,34 +127,48 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public SubmitResultVO submitSaveId(Task task, DataUrl dataUrl) {
-		return this.taskQueueHelper.submitTask(task, () -> {
+		DiscordInstance discordInstance = this.discordLoadBalancer.chooseInstance();
+		if (discordInstance == null) {
+			return SubmitResultVO.fail(ReturnCode.NOT_FOUND, "无可用的账号实例");
+		}
+		task.setProperty(Constants.TASK_PROPERTY_DISCORD_INSTANCE_ID, discordInstance.getInstanceId());
+		return discordInstance.submitTask(task, () -> {
 			String taskFileName = task.getId() + "." + MimeTypeUtils.guessFileSuffix(dataUrl.getMimeType());
-			Message<String> uploadResult = this.discordService.upload(taskFileName, dataUrl);
+			Message<String> uploadResult = discordInstance.upload(taskFileName, dataUrl);
 			if (uploadResult.getCode() != ReturnCode.SUCCESS) {
 				return Message.of(uploadResult.getCode(), uploadResult.getDescription());
 			}
 			String finalFileName = uploadResult.getResult();
-			return this.discordService.saveId(task.getPrompt(), finalFileName, task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE));
+			return discordInstance.saveId(task.getPrompt(), finalFileName, task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE));
 		});
 	}
 
 	@Override
 	public SubmitResultVO submitSwapId(Task task, DataUrl dataUrl) {
-		return this.taskQueueHelper.submitTask(task, () -> {
+		DiscordInstance discordInstance = this.discordLoadBalancer.chooseInstance();
+		if (discordInstance == null) {
+			return SubmitResultVO.fail(ReturnCode.NOT_FOUND, "无可用的账号实例");
+		}
+		task.setProperty(Constants.TASK_PROPERTY_DISCORD_INSTANCE_ID, discordInstance.getInstanceId());
+		return discordInstance.submitTask(task, () -> {
 			String taskFileName = task.getId() + "." + MimeTypeUtils.guessFileSuffix(dataUrl.getMimeType());
-			Message<String> uploadResult = this.discordService.upload(taskFileName, dataUrl);
+			Message<String> uploadResult = discordInstance.upload(taskFileName, dataUrl);
 			if (uploadResult.getCode() != ReturnCode.SUCCESS) {
 				return Message.of(uploadResult.getCode(), uploadResult.getDescription());
 			}
 			String finalFileName = uploadResult.getResult();
-			return this.discordService.swapId(task.getPrompt(), finalFileName, task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE));
+			return discordInstance.swapId(task.getPrompt(), finalFileName, task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE));
 		});
 	}
 
 	@Override
 	public SubmitResultVO submitDelId(Task task) {
-		return this.taskQueueHelper.submitTask(task, () ->
-				this.discordService.delId(task.getPrompt(), task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE))
+		DiscordInstance discordInstance = this.discordLoadBalancer.chooseInstance();
+		if (discordInstance == null) {
+			return SubmitResultVO.fail(ReturnCode.NOT_FOUND, "无可用的账号实例");
+		}
+		return discordInstance.submitTask(task, () ->
+				discordInstance.delId(task.getPrompt(), task.getPropertyGeneric(Constants.TASK_PROPERTY_NONCE))
 		);
 	}
 }
