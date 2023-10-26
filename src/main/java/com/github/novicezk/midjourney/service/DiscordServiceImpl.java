@@ -116,7 +116,7 @@ public class DiscordServiceImpl implements DiscordService {
 	@Override
 	public Message<Void> saveId(String avatarId, String finalFileName, String nonce) {
 		String fileName = CharSequenceUtil.subAfter(finalFileName, "/", true);
-		String paramsStr = replaceInteractionParams(this.saveIdParamsJson, nonce)
+		String paramsStr = replaceInteractionParams(this.paramsMap.get("saveid"), nonce)
 				.replace("$file_name", fileName)
 				.replace("$final_file_name", finalFileName);
 		JSONObject params = new JSONObject(paramsStr);
@@ -128,7 +128,7 @@ public class DiscordServiceImpl implements DiscordService {
 	@Override
 	public Message<Void> swapId(String avatarId, String finalFileName, String nonce) {
 		String fileName = CharSequenceUtil.subAfter(finalFileName, "/", true);
-		String paramsStr = replaceInteractionParams(this.swapIdParamsJson, nonce)
+		String paramsStr = replaceInteractionParams(this.paramsMap.get("swapid"), nonce)
 				.replace("$file_name", fileName)
 				.replace("$final_file_name", finalFileName);
 		JSONObject params = new JSONObject(paramsStr);
@@ -139,7 +139,7 @@ public class DiscordServiceImpl implements DiscordService {
 
 	@Override
 	public Message<Void> delId(String avatarId, String nonce) {
-		String paramsStr = replaceInteractionParams(this.delIdParamsJson, nonce);
+		String paramsStr = replaceInteractionParams(this.paramsMap.get("delid"), nonce);
 		JSONObject params = new JSONObject(paramsStr);
 		params.getJSONObject("data").getJSONArray("options").getJSONObject(0)
 				.put("value", avatarId);
