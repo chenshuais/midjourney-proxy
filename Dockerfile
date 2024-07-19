@@ -31,4 +31,7 @@ ENV JAVA_OPTS -XX:MaxRAMPercentage=85 -Djava.awt.headless=true -XX:+HeapDumpOnOu
  -Dcom.sun.management.jmxremote.authenticate=false -Dlogging.file.path=/home/spring/logs \
  -Dserver.port=8080 -Duser.timezone=Asia/Shanghai
 
+# 将配置写入到
+RUN printf '%s' "$MJ_CONFIG" | sed 's/\\/"/g' >> $SPRING_HOME/config/application.yml
+
 ENTRYPOINT ["bash","-c","java $JAVA_OPTS -jar app.jar"]
